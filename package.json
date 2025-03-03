@@ -1,0 +1,25 @@
+{
+  "name": "eslint-plugin-direct-exports",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "eslint",
+    "plugin",
+    "direct",
+    "exports"
+  ],
+  "author": "gundurraga",
+  "license": "MIT",
+  "description": "ESLint plugin to enforce direct exports",
+  "peerDependencies": {
+    "eslint": ">=6.0.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.26.0",
+    "@typescript-eslint/parser": "^8.26.0",
+    "eslint": "^9.21.0"
+  }
+}
