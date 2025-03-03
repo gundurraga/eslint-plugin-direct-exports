@@ -1,6 +1,8 @@
+import preferDirectExport from "./rules/prefer-direct-exports";
+
 module.exports = {
   rules: {
-    "prefer-direct-export": require("./rules/prefer-direct-export"),
+    "prefer-direct-export": preferDirectExport,
   },
   configs: {
     recommended: {
