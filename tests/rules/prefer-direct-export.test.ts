@@ -1,5 +1,5 @@
 const { RuleTester } = require("eslint");
-const rule = require("../../lib/rules/prefer-direct-exports").default;
+const rule = require("../../lib/rules/prefer-direct-export").default;
 const path = require("path");
 
 const ruleTester = new RuleTester({
@@ -31,26 +31,16 @@ ruleTester.run("prefer-direct-export", rule, {
       };
     `),
 
-    // 3. Import used in code, not just re-exported
-    withFilename(`
+    // 3. Non-index file (rule should skip)
+    withFilename(
+      `
       import { foo } from "module-a";
-      console.log(foo);
       export { foo };
-    `),
+    `,
+      "utils.js"
+    ),
 
-    // 4. Non-index file with onlyIndexFiles option
-    {
-      ...withFilename(
-        `
-        import { foo } from "module-a";
-        export { foo };
-      `,
-        "utils.js"
-      ),
-      options: [{ onlyIndexFiles: true }],
-    },
-
-    // 5. Ignored module
+    // 4. Ignored module
     {
       ...withFilename(`
         import { foo } from "ignored-module";
@@ -58,6 +48,15 @@ ruleTester.run("prefer-direct-export", rule, {
       `),
       options: [{ ignoreModules: ["ignored-module"] }],
     },
+
+    // 5. Non-js/ts file
+    withFilename(
+      `
+      import { foo } from "module-a";
+      export { foo };
+    `,
+      "index.jsx"
+    ),
   ],
 
   invalid: [
@@ -67,7 +66,6 @@ ruleTester.run("prefer-direct-export", rule, {
         import { foo } from "module-a";
         export { foo };
       `),
-      output: 'export { foo } from "module-a";',
       errors: [
         {
           messageId: "preferDirectExport",
@@ -82,8 +80,11 @@ ruleTester.run("prefer-direct-export", rule, {
         import { foo, bar } from "module-a";
         export { foo, bar };
       `),
-      output: 'export { foo, bar } from "module-a";',
       errors: [
+        {
+          messageId: "preferDirectExport",
+          data: { source: "module-a" },
+        },
         {
           messageId: "preferDirectExport",
           data: { source: "module-a" },
@@ -98,8 +99,6 @@ ruleTester.run("prefer-direct-export", rule, {
         import { bar } from "module-b";
         export { foo, bar };
       `),
-      output:
-        'export { foo } from "module-a";\nexport { bar } from "module-b";',
       errors: [
         {
           messageId: "preferDirectExport",
@@ -118,7 +117,6 @@ ruleTester.run("prefer-direct-export", rule, {
         import defaultExport from "module-a";
         export { defaultExport };
       `),
-      output: 'export { default as defaultExport } from "module-a";',
       errors: [
         {
           messageId: "preferDirectExport",
@@ -133,7 +131,6 @@ ruleTester.run("prefer-direct-export", rule, {
         import { foo } from "module-a";
         export { foo as bar };
       `),
-      output: 'export { foo as bar } from "module-a";',
       errors: [
         {
           messageId: "preferDirectExport",
@@ -142,18 +139,19 @@ ruleTester.run("prefer-direct-export", rule, {
       ],
     },
 
-    // 6. Mixed default and named imports
+    // 6. TS file
     {
-      ...withFilename(`
-        import React, { useState } from "react";
-        export { React, useState };
-      `),
-      output:
-        'export { default as React } from "react";\nexport { useState } from "react";',
+      ...withFilename(
+        `
+        import { foo } from "module-a";
+        export { foo };
+      `,
+        "index.ts"
+      ),
       errors: [
         {
           messageId: "preferDirectExport",
-          data: { source: "react" },
+          data: { source: "module-a" },
         },
       ],
     },

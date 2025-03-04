@@ -1,15 +1,14 @@
-import preferDirectExport from "./rules/prefer-direct-exports";
+import preferDirectExport from "./rules/prefer-direct-export";
 
-module.exports = {
-  rules: {
-    "prefer-direct-export": preferDirectExport,
-  },
-  configs: {
-    recommended: {
-      plugins: ["direct-exports"],
-      rules: {
-        "direct-exports/prefer-direct-export": "warn",
-      },
+export const rules = {
+  "prefer-direct-export": preferDirectExport,
+};
+
+export const configs = {
+  recommended: {
+    plugins: ["direct-exports"],
+    rules: {
+      "direct-exports/prefer-direct-export": "warn",
     },
   },
 };
