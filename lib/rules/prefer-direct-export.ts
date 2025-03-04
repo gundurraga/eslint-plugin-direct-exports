@@ -61,7 +61,7 @@ const rule: Rule.RuleModule = {
     const filename = context.getFilename();
     const basename = path.basename(filename);
 
-    if (onlyIndexFiles && !basename.match(/^index\.(js|ts)$/)) {
+    if (onlyIndexFiles && !basename.match(/^index\.(js|ts|jsx|tsx)$/)) {
       return {};
     }
 
